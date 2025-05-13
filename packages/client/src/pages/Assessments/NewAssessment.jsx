@@ -1,6 +1,6 @@
-import { text } from 'stream/consumers';
+// import { text } from 'stream/consumers';
 import React from 'react';
-import { Button, Form } from 'react-bootstrap';
+import { Button, Col, Form, Row } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { AssessmentService } from '../../services/AssessmentService';
 
@@ -8,78 +8,134 @@ export const NewAssessment = () => {
 
   // create a form that utilizes the "onSubmit" function to send data to
   // packages/client/src/services/AssessmentService.js and then onto the packages/api/src/routes/assessment express API
-  const onSubmit = async (data) => {
-    await AssessmentService.submit(data);
-  };
-  const { register } = useForm();
+  const onSubmit = async (data) => await console.log(data);
+  //  {
+  // await AssessmentService.submit(data);
+  //  };
+  const { handleSubmit, register } = useForm();
   return (
-    <Form>
-      <h1>Cat Assessment Info</h1>
-      <div>
-        <h2>Instrument</h2>
+    <Form onSubmit={ handleSubmit(onSubmit) } className="p-4 border rounded bg-light">
+      <h1 className="mb-4">Cat Assessment Info</h1>
+      <section className="mb-4">
+        <h4>Instrument</h4>
         <p>Cat Behavioral Instrument</p>
-      </div>
-      <div>
-        <h2>Cat Details</h2>
-        <label>
-          Cat Name
-          <input type="text" {...register(`CatName`, { required: true })} />
-        </label>
-        <label>
-          Cat Date of Birth
-          <input type="date" {...register(`CatDateOfBirth`)} />
-        </label>
-      </div>
-      <div>
-        <h2>Questions & Responses</h2>
+      </section>
+      <section className="mb-4">
+        <h4>Cat Details</h4>
+        <Form.Group className="mb-3">
+          <Form.Label>Cat Name</Form.Label>
+          <Form.Control type="text" {...register(`CatName`, { required: true })} placeholder="Enter cat name" />
+        </Form.Group>
+
+        <Form.Group className="mb-3">
+          <Form.Label>Cat Date of Birth</Form.Label>
+          <Form.Control type="date" {...register(`CatDateOfBirth`)} />
+        </Form.Group>
+      </section>
+      <section className="mb-4">
+        <h4>Questions & Responses</h4>
         <ol>
-          <li>Previous contact with the Cat Judicial System</li>
-          <label>
-            <input type="radio" value="0" {...register(`PreContact`)} />
-            No
-          </label>
-          <label>
-            <input type="radio" value="1" {...register(`PreContact`)} />
-            Yes
-          </label>
-          <li>Physical altercations with other cates</li>
-          <label>
-            <input type="radio" value="0" {...register(`PhysAltCat`)} />
-            0-3 altercations
-          </label>
-          <label>
-            <input type="radio" value="1" {...register(`PhysAltCat`)} />
-            3+ altercations
-          </label>
-          <li>Physical altercations with owner (scratching, biting, etc...)</li>
-          <label>
-            <input type="radio" value="0" {...register(`PhysAltOwner`)} />
-            0-10 altercations
-          </label>
-          <label>
-            <input type="radio" value="1" {...register(`PhysAltOwner`)} />
-            10+ altercations
-          </label>
-          <li>Plays well with dogs</li>
-          <label>
-            <input type="radio" value="0" {...register(`PlaysDogs`)} />
-            No
-          </label>
-          <label>
-            <input type="radio" value="1" {...register(`PlaysDogs`)} />
-            Yes
-          </label>
-          <li>Hisses at strangers</li>
-          <label>
-            <input type="radio" value="0" {...register(`HissesStr`)} />
-            No
-          </label>
-          <label>
-            <input type="radio" value="1" {...register(`HissesStr`)} />
-            Yes
-          </label>
+          <li className="mb-3">
+            <Form.Label>Previous contact with the Cat Judicial System</Form.Label>
+            <div>
+              <Form.Check
+                inline
+                label="No"
+                type="radio"
+                value="0"
+                {...register(`PreContact`)}
+              />
+              <Form.Check
+                inline
+                label="Yes"
+                type="radio"
+                value="1"
+                {...register(`PreContact`)}
+              />
+            </div>
+          </li>
+
+          <li className="mb-3">
+            <Form.Label>Physical altercations with other cats</Form.Label>
+            <div>
+              <Form.Check
+                inline
+                label="0-3 altercations"
+                type="radio"
+                value="0"
+                {...register(`PhysAltCat`)}
+              />
+              <Form.Check
+                inline
+                label="3+ altercations"
+                type="radio"
+                value="1"
+                {...register(`PhysAltCat`)}
+              />
+            </div>
+          </li>
+
+          <li className="mb-3">
+            <Form.Label>Physical altercations with owner (scratching, biting, etc...)</Form.Label>
+            <div>
+              <Form.Check
+                inline
+                label="0-10 altercations"
+                type="radio"
+                value="0"
+                {...register(`PhysAltOwner`)}
+              />
+              <Form.Check
+                inline
+                label="10+ altercations"
+                type="radio"
+                value="1"
+                {...register(`PhysAltOwner`)}
+              />
+            </div>
+          </li>
+
+          <li className="mb-3">
+            <Form.Label>Plays well with dogs</Form.Label>
+            <div>
+              <Form.Check
+                inline
+                label="No"
+                type="radio"
+                value="0"
+                {...register(`PlaysDogs`)}
+              />
+              <Form.Check
+                inline
+                label="Yes"
+                type="radio"
+                value="1"
+                {...register(`PlaysDogs`)}
+              />
+            </div>
+          </li>
+
+          <li className="mb-3">
+            <Form.Label>Hisses at strangers</Form.Label>
+            <div>
+              <Form.Check
+                inline
+                label="No"
+                type="radio"
+                value="0"
+                {...register(`HissesStr`)}
+              />
+              <Form.Check
+                inline
+                label="Yes"
+                type="radio"
+                value="1"
+                {...register(`HissesStr`)}
+              />
+            </div>
+          </li>
         </ol>
-      </div>
+      </section>
       <Button variant="primary" type="submit">Submit</Button>
     </Form>);
 };

@@ -10,6 +10,8 @@
     "npm-check-updates": "^16.5.1"
   },
   "dependencies": {
+    "bootstrap": "^5.3.6",
+    "react-bootstrap": "^2.10.10",
     "react-hook-form": "^7.56.3"
   }
 }

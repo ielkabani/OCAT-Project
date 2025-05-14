@@ -29,10 +29,27 @@ exports.submit = async (assessment) => {
   }
 };
 
-exports.getList = () => {
+exports.getList = async () => {
   // use the sequelize model Assessments from packages/api/src/database/models to fetch
   // the assessment data from the PostgreSQL database
-  const assessments = [];
-
-  return assessments;
+  try {
+    // You can pass query filters to findAll if needed
+    const assessments = await Assessment.findAll(
+      {
+        attributes: [
+          `id`,
+          `catName`,
+          `catDateOfBirth`,
+          `instrumentType`,
+          `score`,
+          `riskLevel`,
+        ],
+        raw: true,
+      },
+    );
+    return assessments;
+  } catch (e) {
+    console.error(`Error fetching assessments`, e);
+    return [];
+  }
 };

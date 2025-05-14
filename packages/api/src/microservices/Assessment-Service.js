@@ -3,7 +3,7 @@ const { Assessment } = require(`../database/models`);
 
 exports.submit = async (assessment) => {
   // console.log(`For DB:`, assessment);
-  const instrument_type = 1;
+  const instrument_type = `Cat Behavioral Instrument`;
   const score1 = parseInt(assessment.PreContact) + parseInt(assessment.PhysAltCat) + parseInt(assessment.PhysAltOwner) +
                 parseInt(assessment.PlaysDogs) + parseInt(assessment.HissesStr);
   const risk_level = score1 <= 1 ? `low` : score1 >= 2 && score1 <= 3 ? `medium` : score1 >= 4 ? `high` : `unknown`;

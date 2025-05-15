@@ -4,9 +4,13 @@ const { Assessment } = require(`../database/models`);
 exports.submit = async (assessment) => {
   // console.log(`For DB:`, assessment);
   const instrument_type = `Cat Behavioral Instrument`;
-  const score1 = parseInt(assessment.PreContact) + parseInt(assessment.PhysAltCat) + parseInt(assessment.PhysAltOwner) +
-                parseInt(assessment.PlaysDogs) + parseInt(assessment.HissesStr);
-  const risk_level = score1 <= 1 ? `low` : score1 >= 2 && score1 <= 3 ? `medium` : score1 >= 4 ? `high` : `unknown`;
+  const calc_score = parseInt(assessment.PreContact) +
+                    parseInt(assessment.PhysAltCat) +
+                    parseInt(assessment.PhysAltOwner) +
+                    parseInt(assessment.PlaysDogs) +
+                    parseInt(assessment.HissesStr);
+  const risk_level = calc_score <= 1 ? `low` : calc_score >= 2 && calc_score <= 3 ? `medium` :
+    calc_score >= 4 ? `high` : `unknown`;
   const cat_Name = assessment.CatName;
   const cat_DOB = new Date(assessment.CatDateOfBirth);
   // console.log(instrument_type);
@@ -22,7 +26,7 @@ exports.submit = async (assessment) => {
       catName: cat_Name,
       instrumentType: instrument_type,
       riskLevel: risk_level,
-      score: score1,
+      score: calc_score,
     });
   } catch (e) {
     console.error(`Error inserting data`, e);
@@ -42,6 +46,7 @@ exports.getList = async (query = {}) => {
     if (query.instrumentType) { where.instrumentType = query.instrumentType; }
     if (query.riskLevel) { where.riskLevel = query.riskLevel; }
     if (query.score) { where.score = Number(query.score); }
+    if (query.createdAt) { where.createdAt = query.createdAt; }
     // For pagination
     // const page = Number(query.page) > 0 ? Number(query.page) : 1;
     // const pageSize = Number(query.pageSize) > 0 ? Number(query.pageSize) : 10;
@@ -59,6 +64,7 @@ exports.getList = async (query = {}) => {
         `instrumentType`,
         `score`,
         `riskLevel`,
+        `createdAt`,
       ],
       raw: true,
     });
@@ -72,6 +78,7 @@ exports.getList = async (query = {}) => {
         `instrumentType`,
         `score`,
         `riskLevel`,
+        `createdAt`,
       ],
       //   limit,
       //   offset,

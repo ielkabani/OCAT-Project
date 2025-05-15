@@ -1,13 +1,15 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useTable } from 'react-table';
+import { useGlobalFilter, useSortBy, useTable } from 'react-table';
 import { set } from 'react-hook-form';
 import { AssessmentService } from '../../services/AssessmentService';
 
 export const AssessmentList = () => {
+  const [ globalFilter, setGlobalFilter ] = useState(``);
   const [ assessments, setAssessments ] = useState([]);
   const [ filters, setFilters ] = useState({
     catDateOfBirth: ``,
     catName: ``,
+    createdAt: ``,
     id: ``,
     instrumentType: ``,
     riskLevel: ``,
@@ -32,6 +34,7 @@ export const AssessmentList = () => {
   // Handle filter input changes
   const handleChange = (e) => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
+    setPage(1); // Reset to first page on filter change
   };
   // Define columns for react-table
   const columns = useMemo(
@@ -42,6 +45,7 @@ export const AssessmentList = () => {
       { Header: `Instrument Type`, accessor: `instrumentType` },
       { Header: `Score`, accessor: `score` },
       { Header: `Risk Level`, accessor: `riskLevel` },
+      { Header: `Created At`, accessor: `createdAt` },
     ],
     []
   );
@@ -53,10 +57,25 @@ export const AssessmentList = () => {
     headerGroups,
     prepareRow,
     rows,
-  } = useTable({ columns, data });
+    setGlobalFilter: setTableGlobalFilter,
+  } = useTable({ columns, data, globalFilter }, useGlobalFilter, useSortBy);
+
+  useEffect(() => {
+    setTableGlobalFilter(globalFilter);
+  }, [ globalFilter, setTableGlobalFilter ]);
 
   return (
     <div>
+      {/* Global Search */}
+      <div style={{ marginBottom: `1rem` }}>
+        <input
+          type="text"
+          placeholder="Search all fields..."
+          value={globalFilter}
+          onChange={e => setGlobalFilter(e.target.value)}
+          style={{ padding: 6, width: 300 }}
+        />
+      </div>
       {/* Filter Controls */}
       <div style={{ display: `flex`, flexWrap: `wrap`, gap: `0.5rem`, marginBottom: `1rem` }}>
         <input
@@ -101,14 +120,33 @@ export const AssessmentList = () => {
           onChange={handleChange}
           style={{ width: 140 }}
         />
+        <input
+          name="createdAt"
+          placeholder="Filter by Created At"
+          value={filters.createdAt}
+          onChange={handleChange}
+          style={{ width: 160 }}
+        />
       </div>
       {Array.isArray(assessments) && assessments.length > 0 && headerGroups ?
-        <table {...getTableProps()} className="table table-striped">
+        <table {...getTableProps()} style={{ borderCollapse: `collapse`, width: `100%` }}>
           <thead>
             {headerGroups.map(headerGroup =>
               <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>
                 {headerGroup.headers.map(column =>
-                  <th {...column.getHeaderProps()} key={column.id}>{column.render(`Header`)}</th>)}
+                  <th
+                    {...column.getHeaderProps(column.getSortByToggleProps())}
+                    key={column.id}
+                    style={{
+                      background: `#f4f4f4`,
+                      border: `1px solid #ddd`,
+                      cursor: `pointer`,
+                      padding: `8px`,
+                    }}
+                  >
+                    {column.render(`Header`)}
+                    {column.isSorted ? column.isSortedDesc ? `🔽` : `🔼` : ``}
+                  </th>)}
               </tr>)}
           </thead>
           <tbody {...getTableBodyProps()}>
@@ -117,7 +155,9 @@ export const AssessmentList = () => {
               return (
                 <tr {...row.getRowProps()} key={row.id}>
                   {row.cells.map(cell =>
-                    <td {...cell.getCellProps()} key={cell.column.id}>{cell.render(`Cell`)}</td>)}
+                    <td {...cell.getCellProps()} key={cell.column.id}
+                      style={{ border: `1px solid #ddd`, padding: `8px` }}>
+                      {cell.render(`Cell`)}</td>)}
                 </tr>
               );
             })}

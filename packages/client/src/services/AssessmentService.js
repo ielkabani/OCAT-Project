@@ -28,4 +28,8 @@ export class AssessmentService {
   //    throw new Error(`${err.response.statusText} - ${err.response.data.message}`);
   //  }
   }
+
+  static delete(id) {
+    return Axios.delete(`/assessment/${id}`);
+  }
 }

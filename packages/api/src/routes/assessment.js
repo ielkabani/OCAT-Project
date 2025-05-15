@@ -33,7 +33,7 @@ assessmentRouter.get(
       // verify that your data is making it here to the API by using console.log();
       // call the AssessmentService.getList function from packages/api/src/microservices/Assessment-Service.js
       // const assessments = [];
-      console.log(`Route hit! req.query:`, req.query);
+      // console.log(`Route hit! req.query:`, req.query);
       // Call the AssessmentService.getList function
       const assessments = await AssessmentService.getList(req.query);
       // console.log(`Incoming query:`, assessments);
@@ -46,5 +46,14 @@ assessmentRouter.get(
     }
   },
 );
+
+assessmentRouter.delete(`/:id`, async (req, res, next) => {
+  try {
+    await AssessmentService.softDelete(req.params.id);
+    res.json({ message: `Assessment soft deleted` });
+  } catch (err) {
+    next(err);
+  }
+});
 
 module.exports = { assessmentRouter };

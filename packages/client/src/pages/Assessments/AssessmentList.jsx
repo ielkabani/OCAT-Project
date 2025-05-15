@@ -36,6 +36,11 @@ export const AssessmentList = () => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
     setPage(1); // Reset to first page on filter change
   };
+  // Handle delete action
+  const handleDelete = async (id) => {
+    await AssessmentService.delete(id);
+    setAssessments(assessments.filter(a => a.id !== id));
+  };
   // Define columns for react-table
   const columns = useMemo(
     () => [
@@ -46,8 +51,17 @@ export const AssessmentList = () => {
       { Header: `Score`, accessor: `score` },
       { Header: `Risk Level`, accessor: `riskLevel` },
       { Header: `Created At`, accessor: `createdAt` },
+      {
+        Cell: ({ row }) =>
+          <button onClick={() => handleDelete(row.original.id)}
+            style={{ color: `blue`, cursor: `pointer` }}
+          >Delete
+          </button>,
+        Header: `Actions`,
+        accessor: `actions`,
+      },
     ],
-    []
+    [ assessments ]
   );
   const data = useMemo(() => assessments, [ assessments ]);
 

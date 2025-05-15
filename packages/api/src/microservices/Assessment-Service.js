@@ -1,4 +1,3 @@
-
 const { Assessment } = require(`../database/models`);
 
 exports.submit = async (assessment) => {
@@ -103,5 +102,15 @@ exports.getList = async (query = {}) => {
     console.error(`Error fetching assessments`, e);
     return { assessments: [], totalPages: 1 };
     // return [];
+  }
+};
+
+exports.softDelete = async (id) => {
+  try {
+    await Assessment.destroy({ where: { id } }); // with paranoid:true, this sets deleted_at
+    return true;
+  } catch (e) {
+    console.error(`Error soft deleting assessment`, e);
+    return false;
   }
 };

@@ -29,27 +29,72 @@ exports.submit = async (assessment) => {
   }
 };
 
-exports.getList = async () => {
+exports.getList = async (query = {}) => {
+
   // use the sequelize model Assessments from packages/api/src/database/models to fetch
   // the assessment data from the PostgreSQL database
   try {
     // You can pass query filters to findAll if needed
-    const assessments = await Assessment.findAll(
-      {
-        attributes: [
-          `id`,
-          `catName`,
-          `catDateOfBirth`,
-          `instrumentType`,
-          `score`,
-          `riskLevel`,
-        ],
-        raw: true,
-      },
-    );
+    const where = {};
+    if (query.id) { where.id = Number(query.id); }
+    if (query.catName) { where.catName = query.catName; }
+    if (query.catDateOfBirth) { where.catDateOfBirth = query.catDateOfBirth; }
+    if (query.instrumentType) { where.instrumentType = query.instrumentType; }
+    if (query.riskLevel) { where.riskLevel = query.riskLevel; }
+    if (query.score) { where.score = Number(query.score); }
+    // For pagination
+    // const page = Number(query.page) > 0 ? Number(query.page) : 1;
+    // const pageSize = Number(query.pageSize) > 0 ? Number(query.pageSize) : 10;
+    // const offset = (page - 1) * pageSize;
+    // const limit = pageSize;
+
+    /* console.log(`Filter query:`, query, `Sequelize where:`, where);
+
+    const assessments = await Assessment.findAll({
+      where,
+      attributes: [
+        `id`,
+        `catName`,
+        `catDateOfBirth`,
+        `instrumentType`,
+        `score`,
+        `riskLevel`,
+      ],
+      raw: true,
+    });
     return assessments;
+    */
+    const findOptions = {
+      attributes: [
+        `id`,
+        `catName`,
+        `catDateOfBirth`,
+        `instrumentType`,
+        `score`,
+        `riskLevel`,
+      ],
+      //   limit,
+      //   offset,
+      raw: true,
+    };
+
+    // Only add 'where' if there are filters
+    if (Object.keys(where).length > 0) {
+      findOptions.where = where;
+    }
+
+    // console.log(`Filter query:`, query, `Sequelize where:`, where);
+    //  const totalCount = await Assessment.count({ where });
+    //  const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
+
+    // const assessments = await Assessment.findAll(findOptions);
+    // return { assessments, totalPages };
+    const assessments = await Assessment.findAll(findOptions);
+    return assessments;
+
   } catch (e) {
     console.error(`Error fetching assessments`, e);
+    // return { assessments: [], totalPages: 1 };
     return [];
   }
 };

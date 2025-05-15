@@ -48,10 +48,10 @@ exports.getList = async (query = {}) => {
     if (query.score) { where.score = Number(query.score); }
     if (query.createdAt) { where.createdAt = query.createdAt; }
     // For pagination
-    // const page = Number(query.page) > 0 ? Number(query.page) : 1;
-    // const pageSize = Number(query.pageSize) > 0 ? Number(query.pageSize) : 10;
-    // const offset = (page - 1) * pageSize;
-    // const limit = pageSize;
+    const page = Number(query.page) > 0 ? Number(query.page) : 1;
+    const pageSize = Number(query.pageSize) > 0 ? Number(query.pageSize) : 10;
+    const offset = (page - 1) * pageSize;
+    const limit = pageSize;
 
     /* console.log(`Filter query:`, query, `Sequelize where:`, where);
 
@@ -80,8 +80,8 @@ exports.getList = async (query = {}) => {
         `riskLevel`,
         `createdAt`,
       ],
-      //   limit,
-      //   offset,
+      limit,
+      offset,
       raw: true,
     };
 
@@ -91,17 +91,17 @@ exports.getList = async (query = {}) => {
     }
 
     // console.log(`Filter query:`, query, `Sequelize where:`, where);
-    //  const totalCount = await Assessment.count({ where });
-    //  const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
+    const totalCount = await Assessment.count({ where });
+    const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
 
-    // const assessments = await Assessment.findAll(findOptions);
-    // return { assessments, totalPages };
     const assessments = await Assessment.findAll(findOptions);
-    return assessments;
+    return { assessments, totalPages };
+    // const assessments = await Assessment.findAll(findOptions);
+    // return assessments;
 
   } catch (e) {
     console.error(`Error fetching assessments`, e);
-    // return { assessments: [], totalPages: 1 };
-    return [];
+    return { assessments: [], totalPages: 1 };
+    // return [];
   }
 };

@@ -16,17 +16,16 @@ export class AssessmentService {
   }
 
   static getList(filters = {}) {
-    try {
-      // Choose the correct method, url, and data to send
-      // in a request to the express packages/api/src/routes/assessment.js
-      // NOTE: the http.config file automatically adds /api to the front of your url
-      return Axios.get(`/assessment/`, {
-        params: filters,
-      })
-        .then(response => response.data.data);
-    }
-    catch (err) {
-      throw new Error(`${err.response.statusText} - ${err.response.data.message}`);
-    }
+    // try {
+    // Choose the correct method, url, and data to send
+    // in a request to the express packages/api/src/routes/assessment.js
+    // NOTE: the http.config file automatically adds /api to the front of your url
+
+    return Axios.get(`/assessment/`, { params: filters })
+      .then(response => response.data.data); // expects { assessments, totalPages }
+  //  }
+  //  catch (err) {
+  //    throw new Error(`${err.response.statusText} - ${err.response.data.message}`);
+  //  }
   }
 }

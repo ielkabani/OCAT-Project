@@ -39,8 +39,7 @@ assessmentRouter.get(
       // console.log(`Incoming query:`, assessments);
       ResponseHandler(
         res,
-        `Fetched assessments`,
-        { assessments },
+        `Fetched assessments`, assessments,
       );
     } catch (err) {
       next(err);

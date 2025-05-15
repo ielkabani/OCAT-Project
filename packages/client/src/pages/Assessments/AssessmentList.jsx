@@ -25,7 +25,7 @@ export const AssessmentList = () => {
     const fetchAssessments = async () => {
       const result = await AssessmentService.getList({ ...filters, page, pageSize });
       //    setAssessments(await AssessmentService.getList(filters));
-      setAssessments(result.assessments);
+      setAssessments(result.assessments || []);
       setTotalPages(result.totalPages || 1);
 
     };

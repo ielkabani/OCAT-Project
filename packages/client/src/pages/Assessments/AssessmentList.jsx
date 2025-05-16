@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useGlobalFilter, useSortBy, useTable } from 'react-table';
-import { set } from 'react-hook-form';
+import { Button, Col, Container, Form, InputGroup, Row, Table } from 'react-bootstrap';
 import { AssessmentService } from '../../services/AssessmentService';
 
 export const AssessmentList = () => {
@@ -15,33 +15,29 @@ export const AssessmentList = () => {
     riskLevel: ``,
     score: ``,
   });
-  // Pagination using 10 rows per page
   const [ page, setPage ] = useState(1);
   const [ pageSize ] = useState(10);
   const [ totalPages, setTotalPages ] = useState(1);
 
-  // fetch all assessments using the AssessmentService.getList function from OCAT/client/services/AssessmentService.js
   useEffect(() => {
     const fetchAssessments = async () => {
       const result = await AssessmentService.getList({ ...filters, page, pageSize });
-      //    setAssessments(await AssessmentService.getList(filters));
       setAssessments(result.assessments || []);
       setTotalPages(result.totalPages || 1);
-
     };
     fetchAssessments();
   }, [ filters, page, pageSize ]);
-  // Handle filter input changes
+
   const handleChange = (e) => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
-    setPage(1); // Reset to first page on filter change
+    setPage(1);
   };
-  // Handle delete action
+
   const handleDelete = async (id) => {
     await AssessmentService.delete(id);
     setAssessments(assessments.filter(a => a.id !== id));
   };
-  // Define columns for react-table
+
   const columns = useMemo(
     () => [
       { Header: `ID`, accessor: `id` },
@@ -53,10 +49,13 @@ export const AssessmentList = () => {
       { Header: `Created At`, accessor: `createdAt` },
       {
         Cell: ({ row }) =>
-          <button onClick={() => handleDelete(row.original.id)}
-            style={{ color: `blue`, cursor: `pointer` }}
-          >Delete
-          </button>,
+          <Button
+            variant="outline-danger"
+            size="sm"
+            onClick={() => handleDelete(row.original.id)}
+          >
+            Delete
+          </Button>,
         Header: `Actions`,
         accessor: `actions`,
       },
@@ -79,71 +78,83 @@ export const AssessmentList = () => {
   }, [ globalFilter, setTableGlobalFilter ]);
 
   return (
-    <div>
+    <Container className="mt-4">
       {/* Global Search */}
-      <div style={{ marginBottom: `1rem` }}>
-        <input
-          type="text"
-          placeholder="Search all fields..."
-          value={globalFilter}
-          onChange={e => setGlobalFilter(e.target.value)}
-          style={{ padding: 6, width: 300 }}
-        />
-      </div>
+      <Row className="mb-3">
+        <Col md={4}>
+          <InputGroup>
+            <Form.Control
+              type="text"
+              placeholder="Search all fields..."
+              value={globalFilter}
+              onChange={e => setGlobalFilter(e.target.value)}
+            />
+          </InputGroup>
+        </Col>
+      </Row>
       {/* Filter Controls */}
-      <div style={{ display: `flex`, flexWrap: `wrap`, gap: `0.5rem`, marginBottom: `1rem` }}>
-        <input
-          name="id"
-          placeholder="Filter by ID"
-          value={filters.id}
-          onChange={handleChange}
-          style={{ width: 120 }}
-        />
-        <input
-          name="catName"
-          placeholder="Filter by Cat Name"
-          value={filters.catName}
-          onChange={handleChange}
-          style={{ width: 140 }}
-        />
-        <input
-          name="catDateOfBirth"
-          placeholder="Filter by Date of Birth"
-          value={filters.catDateOfBirth}
-          onChange={handleChange}
-          style={{ width: 160 }}
-        />
-        <input
-          name="instrumentType"
-          placeholder="Filter by Instrument Type"
-          value={filters.instrumentType}
-          onChange={handleChange}
-          style={{ width: 160 }}
-        />
-        <input
-          name="score"
-          placeholder="Filter by Score"
-          value={filters.score}
-          onChange={handleChange}
-          style={{ width: 120 }}
-        />
-        <input
-          name="riskLevel"
-          placeholder="Filter by Risk Level"
-          value={filters.riskLevel}
-          onChange={handleChange}
-          style={{ width: 140 }}
-        />
-        <input
-          name="createdAt"
-          placeholder="Filter by Created At"
-          value={filters.createdAt}
-          onChange={handleChange}
-          style={{ width: 160 }}
-        />
-      </div>
+      <Form className="mb-3">
+        <Row className="g-2">
+          <Col md>
+            <Form.Control
+              name="id"
+              placeholder="Filter by ID"
+              value={filters.id}
+              onChange={handleChange}
+            />
+          </Col>
+          <Col md>
+            <Form.Control
+              name="catName"
+              placeholder="Filter by Cat Name"
+              value={filters.catName}
+              onChange={handleChange}
+            />
+          </Col>
+          <Col md>
+            <Form.Control
+              name="catDateOfBirth"
+              placeholder="Filter by Date of Birth"
+              value={filters.catDateOfBirth}
+              onChange={handleChange}
+            />
+          </Col>
+          <Col md>
+            <Form.Control
+              name="instrumentType"
+              placeholder="Filter by Instrument Type"
+              value={filters.instrumentType}
+              onChange={handleChange}
+            />
+          </Col>
+          <Col md>
+            <Form.Control
+              name="score"
+              placeholder="Filter by Score"
+              value={filters.score}
+              onChange={handleChange}
+            />
+          </Col>
+          <Col md>
+            <Form.Control
+              name="riskLevel"
+              placeholder="Filter by Risk Level"
+              value={filters.riskLevel}
+              onChange={handleChange}
+            />
+          </Col>
+          <Col md>
+            <Form.Control
+              name="createdAt"
+              placeholder="Filter by Created At"
+              value={filters.createdAt}
+              onChange={handleChange}
+            />
+          </Col>
+        </Row>
+      </Form>
       {Array.isArray(assessments) && assessments.length > 0 && headerGroups ?
-        <table {...getTableProps()} style={{ borderCollapse: `collapse`, width: `100%` }}>
+        <Table {...getTableProps()} striped bordered hover responsive>
           <thead>
             {headerGroups.map(headerGroup =>
               <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>
@@ -151,15 +162,10 @@ export const AssessmentList = () => {
                   <th
                     {...column.getHeaderProps(column.getSortByToggleProps())}
                     key={column.id}
-                    style={{
-                      background: `#f4f4f4`,
-                      border: `1px solid #ddd`,
-                      cursor: `pointer`,
-                      padding: `8px`,
-                    }}
+                    style={{ cursor: `pointer` }}
                   >
                     {column.render(`Header`)}
-                    {column.isSorted ? column.isSortedDesc ? `🔽` : `🔼` : ``}
+                    {column.isSorted ? column.isSortedDesc ? ` 🔽` : ` 🔼` : ``}
                   </th>)}
               </tr>)}
           </thead>
@@ -169,21 +175,35 @@ export const AssessmentList = () => {
               return (
                 <tr {...row.getRowProps()} key={row.id}>
                   {row.cells.map(cell =>
-                    <td {...cell.getCellProps()} key={cell.column.id}
-                      style={{ border: `1px solid #ddd`, padding: `8px` }}>
-                      {cell.render(`Cell`)}</td>)}
+                    <td {...cell.getCellProps()} key={cell.column.id}>
+                      {cell.render(`Cell`)}
+                    </td>)}
                 </tr>
               );
             })}
           </tbody>
-        </table> :
-        <p>No assessments found.</p>}
+        </Table> :
+        <p className="text-muted">No assessments found.</p>}
       {/* Pagination Controls */}
-      <div style={{ marginTop: `1rem` }}>
-        <button onClick={() => setPage(page - 1)} disabled={page <= 1}>Previous</button>
-        <span style={{ margin: `0 1rem` }}>Page {page} of {totalPages}</span>
-        <button onClick={() => setPage(page + 1)} disabled={page >= totalPages}>Next</button>
+      <div className="d-flex justify-content-center align-items-center mt-3">
+        <Button
+          variant="secondary"
+          onClick={() => setPage(page - 1)}
+          disabled={page <= 1}
+          className="me-2"
+        >
+          Previous
+        </Button>
+        <span>Page {page} of {totalPages}</span>
+        <Button
+          variant="secondary"
+          onClick={() => setPage(page + 1)}
+          disabled={page >= totalPages}
+          className="ms-2"
+        >
+          Next
+        </Button>
       </div>
-    </div>
+    </Container>
   );
 };

@@ -65,7 +65,10 @@ InferCreationAttributes<Assessment>
       },
       /* eslint-enable sort-keys */
     }, {
+      deletedAt: `deletedAt`,
+      paranoid: true,
       sequelize,
+      tableName: `assessments`,
     });
 
     return Assessment;

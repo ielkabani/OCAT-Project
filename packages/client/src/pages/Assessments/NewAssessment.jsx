@@ -1,6 +1,6 @@
 // import { text } from 'stream/consumers';
-import React from 'react';
-import { Button, Form } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Alert, Button, Form } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { AssessmentService } from '../../services/AssessmentService';
 
@@ -8,13 +8,19 @@ export const NewAssessment = () => {
 
   // create a form that utilizes the "onSubmit" function to send data to
   // packages/client/src/services/AssessmentService.js and then onto the packages/api/src/routes/assessment express API
+  const [ success, setSuccess ] = useState(false);
+  const { handleSubmit, register, reset } = useForm();
   const onSubmit = async (data) => {
     await AssessmentService.submit(data);
+    setSuccess(true);
+    reset(); // This will clear the form fields
+    setTimeout(() => setSuccess(false), 3000); // Hide message after 3 seconds
   };
-  const { handleSubmit, register } = useForm();
+
   return (
     <Form onSubmit={ handleSubmit(onSubmit) } className="p-4 border rounded bg-light">
       <h1 className="mb-4">Cat Assessment Info</h1>
+      {success && <Alert variant="success">Assessment submitted successfully!</Alert>}
       <section className="mb-4">
         <h4>Instrument</h4>
         <p>Cat Behavioral Instrument</p>
